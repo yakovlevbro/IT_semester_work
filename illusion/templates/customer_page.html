@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% block title %}
+{{ request.user.username }}
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col ">
+      <h3>{{ request.user.username }}</h3>
+        <form method="post">
+            {% csrf_token %}
+        {{ form.as_p }}
+        {{ form_.as_p }}
+            <input type="submit" value="Изменить" class="btn btn-success btn-block">
+            </form>
+    </div>
+    <div class="col">
+        {% for item, done_at in orderhistory %}
+      <h3>{{ item.title }}|{{ done_at }} </h3>
+        {% endfor %}
+    </div>
+  </div>
+{% endblock %}

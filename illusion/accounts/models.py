@@ -4,10 +4,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+CITIES = (('K', 'Казань'), ('M', 'Москва'), ('S', 'Санкт-Петербург'))
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    city = models.CharField(max_length=30, blank=True, null=True)
-    profile_pic = models.ImageField(null=True, blank=True)
+    city = models.CharField(max_length=1, blank=True, null=True, choices=CITIES)
     phone_number = models.IntegerField(blank=True, null=True)
 
     def __str__(self):

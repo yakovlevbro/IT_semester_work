@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import OrderHistory, Tag, Service
+
+admin.site.register(OrderHistory)
+admin.site.register(Tag)
+admin.site.register(Service)

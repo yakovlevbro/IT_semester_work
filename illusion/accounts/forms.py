@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from .models import Customer
 
 
 class LoginUserForm(AuthenticationForm):
@@ -51,3 +52,14 @@ class CreateUserForm(UserCreationForm):
             'username': forms.TextInput(attrs={'class': 'form-control input-sm', 'placeholder': 'Username'}),
             'email': forms.EmailInput(attrs={'class': "form-control input-sm", 'placeholder': 'Email'})
         }
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+        exclude = ['user']
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields =['first_name', 'last_name', 'email', 'username']
