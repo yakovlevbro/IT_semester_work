@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% block title %}
+    Login
+{% endblock %}
+{% block content %}
+    <div style="width:400px; margin:0 auto;">
+        {% for message in messages %}
+            <div class="alert alert-dark" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label >Имя пользователя</label>
+                {{ form.username}}
+            </div>
+            <div class="form-group">
+                <label >Пароль</label>
+                {{ form.password }}
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">{{ form.remember_me }}
+                <label class="form-check-label" for="exampleCheck1">Remember me</label>
+            </div>
+            <div>&nbsp;</div>
+            <div>
+                {% for error in form.errors.values %}
+                    <p>
+                        {{ error }}
+                    </p>
+
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Войти</button>
+
+        </form>
+        <div>
+             Еще нет аккаунта? <a href="{% url 'register' %}">Зарегестрироваться</a>
+        </div>
+    </div>
+
+{% endblock %}
