@@ -4,9 +4,10 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from .forms import ServiceForm, FeedbackForm
-from .models import Service, OrderHistory, Feedback
+from .models import Service, OrderHistory, Feedback, Tag
 from .decorators import allowed_users
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
 
 @allowed_users(['admin'])
 @login_required(login_url='login')
@@ -48,8 +49,13 @@ def service_page(request, pk):
     customer = request.user.customer
 
     feed = Feedback.objects.filter(item=service).exclude(user=customer)
-    feed = Feedback.objects.filter(item=service, user=customer) or feed
-    context = {'service': service, 'feed': feed}
+    feed = Feedback.objects.filter(item=service, user=customer) | feed
+    rating = None
+    if Feedback.objects.filter(item=service).exists():
+        rating = Feedback.objects.filter(item=service).aggregate(Avg('rating')).values()
+        rating = int(list(rating)[0])
+    tags = Tag.objects.filter(service=service)
+    context = {'service': service, 'feed': feed, 'rating': rating, 'tags': tags}
     return render(request, 'service_page.html', context)
 
 
@@ -82,6 +88,7 @@ def create_feedback(request, pk):
             instance = Feedback.objects.get(user=customer, item=service)
             form = FeedbackForm(instance=instance)
     else:
+        messages.success(request, 'Вы не можете оставлять отзывы на услуги, которые не заказывали')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     context = {'form': form}
     if request.method == 'POST':

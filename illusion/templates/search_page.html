@@ -6,13 +6,15 @@
     <div style="width:900px; margin:0 auto;">
         <div class="row">
             {% for service in services %}
-
-
                 <div class="col-4">
-                <span class="border">
-               <a href="{% url 'service_page' service.id %}"> <h3>{{ service.title }}</h3></a>
-                <h5>{{ service.sh_desc }}</h5>
-                </span>
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="{{ service.picture.url }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ service.title}}</h5>
+                            <p class="card-text">{{ service.sh_desc }}</p>
+                            <a href="{% url 'service_page' service.id %}" class="btn btn-dark">Подробнее...</a>
+                        </div>
+                    </div>
                 </div>
 
             {% endfor %}

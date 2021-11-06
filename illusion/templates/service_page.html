@@ -3,30 +3,101 @@
     {{ service.title }}
 {% endblock %}
 {% block content %}
+    <style>
+        .rating-result {
+            width: 265px;
+            margin: 0 auto;
+        }
+        .rating-result span {
+            padding: 0;
+            font-size: 32px;
+            margin: 0 3px;
+            line-height: 1;
+            color: lightgrey;
+            text-shadow: 1px 1px #bbb;
+        }
+        .rating-result > span:before {
+            content: '★';
+        }
+        .rating-result > span.active {
+            color: gold;
+            text-shadow: 1px 1px #c60;
+        }
+    </style>
 
-    <div style="width:400px; margin:0 auto;">
-        <h1>{{ service.title }}
-            {% if request.user.groups.all.0.name == 'admin' %}
-                <a class="btn btn-secondary" href="{% url 'update_service' service.id %}" role="button"><i class="far fa-edit"></i></a>
+    <div style="width:800px; margin:0 auto;">
+        <div class="row">
+            <div class="col">
+                <h1>{{ service.title }}
+                    {% if request.user.groups.all.0.name == 'admin' %}
+                        <a class="btn btn-secondary" href="{% url 'update_service' service.id %}" role="button"><i class="far fa-edit"></i></a>
+                    {% endif %}
+                </h1>
+                <img class="img-fluid" src="{{ service.picture.url }}">
+            </div>
+            <div class="col">
+            <label>Средний рейтинг:</label>
+                <div class="rating-result">
+                {% if rating %}
+                    {% for i in i|rjust:5 %}
+                        {% if forloop.counter <= rating %}
+                            <span class="active"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span>НЕТ РЕЙТИНГА</span>
+                {% endif %}
+                </div>
+                <label>Описание:</label>
+                <h5>{{ service.desc }}</h5>
+                <label>Город:</label>
+                <h4>{{ service.get_city_display }}</h4>
+            <label>Теги:</label>
+            {% if tags %}
+                <ul>
+            {% for tag in tags %}
+                <li>{{ tag.name }}</li>
+            {% endfor %}
+                </ul>
+            {% else %}
+            <p>Тегов нет</p>
             {% endif %}
-        </h1>
-        <img class="img-fluid" src="{{ service.picture.url }}">
-        <h3>{{ service.desc }}</h3>
-        <a class="btn btn-primary" href="{% url 'create_order' service.id %}" role="button">Оставить заявку</a>
-        <br>&nbsp;<br>
-        <a class="btn btn-success" href="{% url 'create_feedback' service.id %}" role="button">Оставить/изменить отзыв</a>
+                <a class="btn btn-primary" href="{% url 'create_order' service.id %}" role="button">Оставить заявку</a>
+                <br>&nbsp;<br>
+                <a class="btn btn-success" href="{% url 'create_feedback' service.id %}" role="button">Оставить/изменить отзыв</a>
+
+            </div></div></div>
+    <div style="width:400px; margin:0 auto;">
         <hr align="center" width="100%" size="10"  />
         <h3>Отзывы</h3>
         <hr align="center" width="100%" size="10"  />
+
         {% if not feed%}
             <h3>Нет отзывов</h3>
         {% else %}
             {% for comm in feed %}
                 <h5>{% if comm.user.user.get_full_name %}
                     {{ comm.user.user.get_full_name }}
-                    {% else %}
+                {% else %}
                     {{ comm.user.user.username }}
                 {% endif %}</h5>
+
+                <div class="rating-result">
+                    {% for i in i|rjust:5 %}
+                        {% if forloop.counter <= comm.rating %}
+                            <span class="active"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+
+
+
+
+                </div>
+
                 <br>
                 {{ comm.text }}
                 <hr align="center" width="100%" size="3"  />
