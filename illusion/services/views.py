@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from .forms import ServiceForm, FeedbackForm
 from .models import Service, OrderHistory, Feedback, Tag
@@ -101,3 +101,13 @@ def create_feedback(request, pk):
         messages.success(request, 'Данные обновлены')
         return redirect('service_page', pk)
     return render(request, 'create_feedback.html', context)
+
+
+@login_required(login_url='login')
+def show_price(request):
+    pk = request.GET.get('pk')
+    if request.is_ajax():
+        service = Service.objects.get(id=pk)
+        price = service.price_ah
+        return JsonResponse({'price': price}, status=200)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

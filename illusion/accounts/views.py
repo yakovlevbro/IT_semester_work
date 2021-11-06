@@ -54,7 +54,6 @@ def customer_page(request):
     orders = []
     for order in OrderHistory.objects.raw("select * from services_orderhistory "
                                             "where user_id=%s", [request.user.customer.id]):
-        print(order)
         orders.append((Service.objects.get(pk=order.item_id), order.done_at))
     if request.method == 'POST':
         customer_form = CustomerForm(request.POST, instance=request.user.customer)

@@ -36,34 +36,36 @@
                 <img class="img-fluid" src="{{ service.picture.url }}">
             </div>
             <div class="col">
-            <label>Средний рейтинг:</label>
+                <label>Средний рейтинг:</label>
                 <div class="rating-result">
-                {% if rating %}
-                    {% for i in i|rjust:5 %}
-                        {% if forloop.counter <= rating %}
-                            <span class="active"></span>
-                        {% else %}
-                            <span></span>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                <span>НЕТ РЕЙТИНГА</span>
-                {% endif %}
+                    {% if rating %}
+                        {% for i in i|rjust:5 %}
+                            {% if forloop.counter <= rating %}
+                                <span class="active"></span>
+                            {% else %}
+                                <span></span>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>НЕТ РЕЙТИНГА</span>
+                    {% endif %}
                 </div>
                 <label>Описание:</label>
                 <h5>{{ service.desc }}</h5>
                 <label>Город:</label>
                 <h4>{{ service.get_city_display }}</h4>
-            <label>Теги:</label>
-            {% if tags %}
-                <ul>
-            {% for tag in tags %}
-                <li>{{ tag.name }}</li>
-            {% endfor %}
-                </ul>
-            {% else %}
-            <p>Тегов нет</p>
-            {% endif %}
+                <label>Теги:</label>
+                {% if tags %}
+                    <ul>
+                        {% for tag in tags %}
+                            <li>{{ tag.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Тегов нет</p>
+                {% endif %}
+                <button class="btn btn-dark" role="price"> {{ service.price_ah }}₽/час </button>
+
                 <a class="btn btn-primary" href="{% url 'create_order' service.id %}" role="button">Оставить заявку</a>
                 <br>&nbsp;<br>
                 <a class="btn btn-success" href="{% url 'create_feedback' service.id %}" role="button">Оставить/изменить отзыв</a>
