@@ -17,7 +17,7 @@ class Service(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     type = models.CharField(max_length=1, blank=True, null=True, choices=TYPE)
     price_ah = models.IntegerField(blank=True, null=True)
-    picture = models.ImageField(blank=True, null=True)
+    picture = models.ImageField(default='def_service.png', blank=True, null=True)
     sh_desc = models.CharField(max_length=30, blank=True, null=True)
     desc = models.TextField(max_length=150, blank=True, null=True)
     city = models.CharField(max_length=1, blank=True, null=True, choices=CITIES)
@@ -30,7 +30,8 @@ class Service(models.Model):
 class OrderHistory(models.Model):
     user = models.ForeignKey(Customer, on_delete=models.CASCADE)
     item = models.ForeignKey(Service, on_delete=models.CASCADE)
-    done_at = models.DateTimeField(auto_now_add=True)
+    # done_at = models.DateTimeField(auto_now_add=True)
+    done_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.user.user.username}__{self.item.title}'

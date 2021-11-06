@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+{% block title %}
+    Доступные услуги
+{% endblock %}
+{% block content %}
+    <div style="width:900px; margin:0 auto;">
+        <div class="row">
+            {% for service in services %}
+
+
+                <div class="col-4">
+                <span class="border">
+               <a href="{% url 'service_page' service.id %}"> <h3>{{ service.title }}</h3></a>
+                <h5>{{ service.sh_desc }}</h5>
+                </span>
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

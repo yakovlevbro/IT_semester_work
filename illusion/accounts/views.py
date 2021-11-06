@@ -50,8 +50,16 @@ def customer_page(request):
     customer_form = CustomerForm(instance=request.user.customer)
     user_form = UserForm(instance=request.user)
     orders = []
-    for order in OrderHistory.objects.raw("select id, item_id, done_at from services_orderhistory "
+    for order in OrderHistory.objects.raw("select * from services_orderhistory "
                                             "where user_id=%s", [request.user.customer.id]):
+        print(order)
         orders.append((Service.objects.get(pk=order.item_id), order.done_at))
+    if request.method == 'POST':
+        customer_form = CustomerForm(request.POST, instance=request.user.customer)
+        user_form = UserForm(request.POST, instance=request.user)
+        if customer_form.is_valid() and user_form.is_valid():
+            customer_form.save()
+            user_form.save()
+            messages.success(request, "Данные обновлены")
     context = {'orderhistory': orders, 'form': customer_form, 'form_': user_form}
     return render(request, 'customer_page.html', context)

@@ -4,11 +4,6 @@
 {% endblock %}
 {% block content %}
     <div style="width:400px; margin:0 auto;">
-        {% for message in messages %}
-            <div class="alert alert-dark" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
