@@ -7,6 +7,8 @@ urlpatterns = [
     path('all', search_page, name='search_page'),
     path('all/<int:pk>', service_page, name='service_page'),
     path('all/<int:pk>/create_order', create_order, name='create_order'),
+    path('all/<int:pk>/create_feedback', create_feedback, name='create_feedback'),
+
 
 
 ]

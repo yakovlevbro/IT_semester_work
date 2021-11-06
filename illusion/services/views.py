@@ -6,8 +6,10 @@ from django.shortcuts import render, redirect
 from .forms import ServiceForm, FeedbackForm
 from .models import Service, OrderHistory, Feedback
 from .decorators import allowed_users
+from django.contrib.auth.decorators import login_required
 
-
+@allowed_users(['admin'])
+@login_required(login_url='login')
 def create_service(request):
     form = ServiceForm()
     context = {'form': form}
@@ -19,7 +21,7 @@ def create_service(request):
             return redirect('customer_page')
     return render(request, 'create_service.html', context)
 
-
+@login_required(login_url='login')
 @allowed_users(['admin'])
 def update_service(request, pk):
     service = Service.objects.get(id=pk)
@@ -33,23 +35,26 @@ def update_service(request, pk):
     return render(request, 'create_service.html', context)
 
 
+@login_required(login_url='login')
 def search_page(request):
     services = Service.objects.all()
     context = {'services': services}
     return render(request, 'search_page.html', context)
 
 
+@login_required(login_url='login')
 def service_page(request, pk):
     service = Service.objects.get(id=pk)
     customer = request.user.customer
-    form = None
-    if not Feedback.objects.filter(user=customer, item=service).exists():
-        form = FeedbackForm()
-    context = {'service': service, 'form': form}
+
+    feed = Feedback.objects.filter(item=service).exclude(user=customer)
+    feed = Feedback.objects.filter(item=service, user=customer) or feed
+    context = {'service': service, 'feed': feed}
     return render(request, 'service_page.html', context)
 
 
-
+@login_required(login_url='login')
+@allowed_users(['customer'])
 def create_order(request, pk):
     customer = request.user.customer
     service = Service.objects.get(id=pk)
@@ -63,3 +68,29 @@ def create_order(request, pk):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     messages.success(request, 'Вы превысили допустимое количество заказов на сегодня. Повторите попытку завтра.')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@allowed_users(['customer'])
+@login_required(login_url='login')
+def create_feedback(request, pk):
+    customer = request.user.customer
+    service = Service.objects.get(id=pk)
+    if OrderHistory.objects.filter(user=customer, item=service).exists():
+        if not Feedback.objects.filter(user=customer, item=service).exists():
+            instance = Feedback(user=customer, item=service)
+            form = FeedbackForm(instance=instance)
+        else:
+            instance = Feedback.objects.get(user=customer, item=service)
+            form = FeedbackForm(instance=instance)
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    context = {'form': form}
+    if request.method == 'POST':
+        instance.text = request.POST.get('text')
+        if request.POST.get('rating'):
+            instance.rating = int(request.POST.get('rating'))
+        else:
+            instance.rating = 0
+        instance.save()
+        messages.success(request, 'Данные обновлены')
+        return redirect('service_page', pk)
+    return render(request, 'create_feedback.html', context)

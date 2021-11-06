@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, LoginUserForm, CustomerForm, UserForm
 from services.models import OrderHistory, Service
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -40,12 +42,12 @@ def login_user(request):
     context = {'form': form}
     return render(request, 'login_user.html', context)
 
-
+@login_required(login_url='login')
 def logout_user(request):
     logout(request)
     return redirect('login')
 
-
+@login_required(login_url='login')
 def customer_page(request):
     customer_form = CustomerForm(instance=request.user.customer)
     user_form = UserForm(instance=request.user)
