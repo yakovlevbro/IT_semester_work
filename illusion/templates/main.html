@@ -28,11 +28,13 @@
                     <a class="nav-link" href="{% url 'search_page' %}">Услуги</a>
 
                 </li>
-                {% if request.user.groups.all.0.name == admin %}
+            {% if request.user.is_authenticated %}
+                {% if request.user.groups.all.0.name == 'admin' %}
                 <li>
                     <a class="nav-link" href="{% url 'create_service' %}"><i class="fas fa-plus"></i></a>
                 </li>
                 {% endif %}
+            {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto">
                 {% if request.user.is_authenticated %}

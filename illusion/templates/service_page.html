@@ -3,6 +3,7 @@
     {{ service.title }}
 {% endblock %}
 {% block content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         .rating-result {
             width: 265px;
@@ -64,7 +65,7 @@
                 {% else %}
                     <p>Тегов нет</p>
                 {% endif %}
-                <button class="btn btn-dark" role="price"> {{ service.price_ah }}₽/час </button>
+                <button class="btn btn-dark" role="price" id="{{ service.id }}"> Показать цену </button>
 
                 <a class="btn btn-primary" href="{% url 'create_order' service.id %}" role="button">Оставить заявку</a>
                 <br>&nbsp;<br>
@@ -109,5 +110,29 @@
             {% endfor %}
         {% endif %}
     </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $('.btn-dark').click(function () {
+                let pk = $(this).prop('id')
+                console.log('work')
+                $.ajax({
+                    url:'/services/price',
+                    type: 'get',
+                    data: {
+                        pk: pk,
+
+                    },
+                    success: function(response) {
+                        $('.btn-dark').text(response.price + '₽/час')
+                    },
+
+                });
+            })
+        })
+
+
+    </script>
 
 {% endblock %}

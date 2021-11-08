@@ -19,7 +19,7 @@ def create_service(request):
         if form.is_valid():
             form.save()
             messages.info(request, 'Создание прошло успешно')
-            return redirect('customer_page')
+            return redirect('search_page')
     return render(request, 'create_service.html', context)
 
 @login_required(login_url='login')
@@ -105,9 +105,18 @@ def create_feedback(request, pk):
 
 @login_required(login_url='login')
 def show_price(request):
-    pk = request.GET.get('pk')
+    pk = int(request.GET.get('pk'))
     if request.is_ajax():
         service = Service.objects.get(id=pk)
         price = service.price_ah
         return JsonResponse({'price': price}, status=200)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required(login_url='login')
+@allowed_users(['admin'])
+def delete_service(request, pk):
+    service = Service.objects.get(id=pk)
+    service.delete()
+    messages.success(request, 'Услуга успешно удалена')
+    return redirect('search_page')
